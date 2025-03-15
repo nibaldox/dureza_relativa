@@ -73,6 +73,38 @@ def main() -> None:
             df_processed: pd.DataFrame = cargar_datos(uploaded_file)
             st.success("Archivo CSV cargado y procesado exitosamente.")
 
+            # Filtros en la barra lateral
+            with st.sidebar:
+                st.header("Filtros")
+                
+                # Filtro por Fecha
+                st.subheader("Filtro por Fecha")
+                # Convertir 'tiempo inicio' a datetime si no lo está ya
+                df_processed['tiempo inicio'] = pd.to_datetime(df_processed['tiempo inicio'])
+                
+                # Obtener fechas mínima y máxima
+                min_date = df_processed['tiempo inicio'].min().date()
+                max_date = df_processed['tiempo inicio'].max().date()
+                
+                # Crear selector de rango de fechas
+                date_range = st.date_input(
+                    "Selecciona rango de fechas",
+                    value=(min_date, max_date),
+                    min_value=min_date,
+                    max_value=max_date
+                )
+                
+                # Asegurar que tenemos dos fechas para el rango
+                if len(date_range) == 2:
+                    start_date, end_date = date_range
+                    # Convertir a datetime para comparación
+                    start_date = pd.to_datetime(start_date)
+                    end_date = pd.to_datetime(end_date).replace(hour=23, minute=59, second=59)
+                else:
+                    # Si solo se selecciona una fecha, usar esa como inicio y fin
+                    start_date = pd.to_datetime(date_range[0])
+                    end_date = pd.to_datetime(date_range[0]).replace(hour=23, minute=59, second=59)
+
             # Filtro por drill pattern
             if "drill_pattern" in df_processed.columns:
                 with st.sidebar:
@@ -82,13 +114,26 @@ def main() -> None:
                     drill_pattern_seleccionado: list = st.multiselect("Selecciona Drill Patterns:", drill_patterns)
 
                     if drill_pattern_seleccionado:
-                        df_filtrado: pd.DataFrame = df_processed[df_processed["drill_pattern"].isin(drill_pattern_seleccionado)]
+                        df_filtrado: pd.DataFrame = df_processed[
+                            (df_processed["drill_pattern"].isin(drill_pattern_seleccionado)) &
+                            (df_processed['tiempo inicio'] >= start_date) &
+                            (df_processed['tiempo inicio'] <= end_date)
+                        ]
                     else:
-                        df_filtrado: pd.DataFrame = df_processed.copy()
+                        df_filtrado: pd.DataFrame = df_processed[
+                            (df_processed['tiempo inicio'] >= start_date) &
+                            (df_processed['tiempo inicio'] <= end_date)
+                        ]
                         st.sidebar.info("Mostrando todos los Drill Patterns.")
             else:
-                df_filtrado: pd.DataFrame = df_processed.copy()
+                df_filtrado: pd.DataFrame = df_processed[
+                    (df_processed['tiempo inicio'] >= start_date) &
+                    (df_processed['tiempo inicio'] <= end_date)
+                ]
                 st.sidebar.info("No se encontró la columna 'drill_pattern'. Mostrando todos los datos.")
+
+            # Mostrar información sobre el filtro de fecha aplicado
+            st.info(f"Mostrando datos desde {start_date.strftime('%Y-%m-%d')} hasta {end_date.strftime('%Y-%m-%d')}")
 
             # Opciones de visualización
             st.sidebar.header("Opciones de Visualización")

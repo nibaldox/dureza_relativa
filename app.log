@@ -3115,3 +3115,80 @@ delete_url: "/_stcore/upload_file/fda72dce-7160-490a-99fa-d300ccae57cf/0ee42b1d-
 2025-02-15 09:20:38,490 INFO Gráfica interactiva de ubicación generada correctamente.
 2025-02-15 09:20:38,499 INFO Mapa de dispersión de índice de dureza generado correctamente
 2025-02-15 09:20:38,528 INFO Visualización 3D generada correctamente.
+2025-03-15 07:19:52,746 DEBUG matplotlib data path: D:\12_WindSurf\11_Dureza_Relativa\venv\Lib\site-packages\matplotlib\mpl-data
+2025-03-15 07:19:52,760 DEBUG CONFIGDIR=C:\Users\nibal\.matplotlib
+2025-03-15 07:19:52,762 DEBUG interactive is False
+2025-03-15 07:19:52,762 DEBUG platform is win32
+2025-03-15 07:19:52,823 DEBUG CACHEDIR=C:\Users\nibal\.matplotlib
+2025-03-15 07:19:52,833 DEBUG Using fontManager instance from C:\Users\nibal\.matplotlib\fontlist-v390.json
+2025-03-15 07:19:58,828 INFO Iniciando carga del archivo: UploadedFile(file_id='22adffc5-ed86-489a-a9ed-655cdccb7d07', name='unificado (17).csv', type='text/csv', size=3271912, _file_urls=file_id: "22adffc5-ed86-489a-a9ed-655cdccb7d07"
+upload_url: "/_stcore/upload_file/c7f53fd4-680d-4a12-82e7-1bf82726a05c/22adffc5-ed86-489a-a9ed-655cdccb7d07"
+delete_url: "/_stcore/upload_file/c7f53fd4-680d-4a12-82e7-1bf82726a05c/22adffc5-ed86-489a-a9ed-655cdccb7d07"
+)
+2025-03-15 07:19:58,877 DEBUG Columnas del archivo: ['tiempo inicio', 'tiempo final', 'perforadora', 'drill_pattern', 'pozo', 'reperforado', 'mts plan', 'prof. por operador', 'prof. por sensor', 'este', 'norte', 'elevacion', 'gps_quality', 'material', 'point.material', 'material_operator', 'material_conditions']
+2025-03-15 07:19:58,910 INFO Archivo procesado exitosamente.
+2025-03-15 07:19:59,132 INFO Gráfico box plot de duración por dureza generado correctamente.
+2025-03-15 07:19:59,215 INFO Gráfica de torta de conteo de pozos por dureza generada correctamente.
+2025-03-15 07:19:59,300 INFO Gráfica interactiva de ubicación generada correctamente.
+2025-03-15 07:19:59,415 INFO Mapa de dispersión de índice de dureza generado correctamente
+2025-03-15 07:19:59,514 INFO Visualización 3D generada correctamente.
+2025-03-15 07:20:13,584 INFO Gráfico box plot de duración por dureza generado correctamente.
+2025-03-15 07:20:13,599 INFO Gráfica de torta de conteo de pozos por dureza generada correctamente.
+2025-03-15 07:20:13,639 INFO Gráfica interactiva de ubicación generada correctamente.
+2025-03-15 07:20:13,649 INFO Mapa de dispersión de índice de dureza generado correctamente
+2025-03-15 07:20:13,688 INFO Visualización 3D generada correctamente.
+2025-03-15 07:20:14,758 INFO Gráfico box plot de duración por dureza generado correctamente.
+2025-03-15 07:20:14,776 INFO Gráfica de torta de conteo de pozos por dureza generada correctamente.
+2025-03-15 07:20:14,805 INFO Gráfica interactiva de ubicación generada correctamente.
+2025-03-15 07:20:14,814 INFO Mapa de dispersión de índice de dureza generado correctamente
+2025-03-15 07:20:14,846 INFO Visualización 3D generada correctamente.
+2025-03-15 07:20:16,006 INFO Gráfico box plot de duración por dureza generado correctamente.
+2025-03-15 07:20:16,020 INFO Gráfica de torta de conteo de pozos por dureza generada correctamente.
+2025-03-15 07:20:16,050 INFO Gráfica interactiva de ubicación generada correctamente.
+2025-03-15 07:20:16,059 INFO Mapa de dispersión de índice de dureza generado correctamente
+2025-03-15 07:20:16,092 INFO Visualización 3D generada correctamente.
+2025-03-15 07:20:17,417 INFO Gráfico box plot de duración por dureza generado correctamente.
+2025-03-15 07:20:17,437 INFO Gráfica de torta de conteo de pozos por dureza generada correctamente.
+2025-03-15 07:20:17,467 INFO Gráfica interactiva de ubicación generada correctamente.
+2025-03-15 07:20:17,474 INFO Mapa de dispersión de índice de dureza generado correctamente
+2025-03-15 07:20:17,504 INFO Visualización 3D generada correctamente.
+2025-03-15 07:24:04,267 INFO Gráfico box plot de duración por dureza generado correctamente.
+2025-03-15 07:24:04,283 INFO Gráfica de torta de conteo de pozos por dureza generada correctamente.
+2025-03-15 07:24:04,312 INFO Gráfica interactiva de ubicación generada correctamente.
+2025-03-15 07:24:04,320 INFO Mapa de dispersión de índice de dureza generado correctamente
+2025-03-15 07:24:04,348 INFO Visualización 3D generada correctamente.
+2025-03-15 07:24:13,128 INFO Gráfico box plot de duración por dureza generado correctamente.
+2025-03-15 07:24:13,143 INFO Gráfica de torta de conteo de pozos por dureza generada correctamente.
+2025-03-15 07:24:13,160 INFO Gráfica interactiva de ubicación generada correctamente.
+2025-03-15 07:24:13,165 INFO Mapa de dispersión de índice de dureza generado correctamente
+2025-03-15 07:24:13,186 INFO Visualización 3D generada correctamente.
+2025-03-15 07:24:17,786 INFO Gráfico box plot de duración por dureza generado correctamente.
+2025-03-15 07:24:17,807 INFO Gráfica de torta de conteo de pozos por dureza generada correctamente.
+2025-03-15 07:24:17,845 INFO Gráfica interactiva de ubicación generada correctamente.
+2025-03-15 07:24:17,854 INFO Mapa de dispersión de índice de dureza generado correctamente
+2025-03-15 07:24:17,885 INFO Visualización 3D generada correctamente.
+2025-03-15 07:24:28,702 INFO Gráfico box plot de duración por dureza generado correctamente.
+2025-03-15 07:24:28,722 INFO Gráfica de torta de conteo de pozos por dureza generada correctamente.
+2025-03-15 07:24:28,758 INFO Gráfica interactiva de ubicación generada correctamente.
+2025-03-15 07:24:28,779 INFO Mapa de dispersión de índice de dureza generado correctamente
+2025-03-15 07:24:28,813 INFO Visualización 3D generada correctamente.
+2025-03-15 07:25:25,193 INFO Gráfico box plot de duración por dureza generado correctamente.
+2025-03-15 07:25:25,207 INFO Gráfica de torta de conteo de pozos por dureza generada correctamente.
+2025-03-15 07:25:25,240 INFO Gráfica interactiva de ubicación generada correctamente.
+2025-03-15 07:25:25,250 INFO Mapa de dispersión de índice de dureza generado correctamente
+2025-03-15 07:25:25,279 INFO Visualización 3D generada correctamente.
+2025-03-15 07:25:31,639 INFO Gráfico box plot de duración por dureza generado correctamente.
+2025-03-15 07:25:31,661 INFO Gráfica de torta de conteo de pozos por dureza generada correctamente.
+2025-03-15 07:25:31,698 INFO Gráfica interactiva de ubicación generada correctamente.
+2025-03-15 07:25:31,708 INFO Mapa de dispersión de índice de dureza generado correctamente
+2025-03-15 07:25:31,747 INFO Visualización 3D generada correctamente.
+2025-03-15 07:27:53,990 INFO Gráfico box plot de duración por dureza generado correctamente.
+2025-03-15 07:27:54,004 INFO Gráfica de torta de conteo de pozos por dureza generada correctamente.
+2025-03-15 07:27:54,031 INFO Gráfica interactiva de ubicación generada correctamente.
+2025-03-15 07:27:54,038 INFO Mapa de dispersión de índice de dureza generado correctamente
+2025-03-15 07:27:54,072 INFO Visualización 3D generada correctamente.
+2025-03-15 07:27:57,743 INFO Gráfico box plot de duración por dureza generado correctamente.
+2025-03-15 07:27:57,761 INFO Gráfica de torta de conteo de pozos por dureza generada correctamente.
+2025-03-15 07:27:57,796 INFO Gráfica interactiva de ubicación generada correctamente.
+2025-03-15 07:27:57,808 INFO Mapa de dispersión de índice de dureza generado correctamente
+2025-03-15 07:27:57,845 INFO Visualización 3D generada correctamente.
