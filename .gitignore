@@ -1,0 +1,62 @@
+# Archivos de Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Entornos virtuales
+venv/
+env/
+ENV/
+.env
+.venv
+env.bak/
+venv.bak/
+
+# Archivos de Streamlit
+.streamlit/secrets.toml
+
+# Archivos de logs
+*.log
+logs/
+
+# Archivos de datos temporales
+*.csv
+*.xlsx
+*.xls
+*.db
+*.sqlite3
+*.json
+data/
+
+# Archivos de configuración de IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Archivos de caché
+.cache/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Archivos específicos del proyecto
+app.log
