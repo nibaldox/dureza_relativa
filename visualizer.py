@@ -1,6 +1,4 @@
 import logging
-import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
 import plotly.express as px
 import pandas as pd
 import plotly.graph_objects as go
@@ -31,10 +29,17 @@ class Visualizer:
                 "roca dura": "#e74c3c",      # rojo más oscuro
                 "roca muy dura": "#BA55D3"   # lavanda más brillante, cercano al original
             }
-            # Preparar hover data para incluir drill pattern si existe
-            hover_data = None
+            # Preparar hover data para incluir drill pattern, profundidad y elevación si existen
+            hover_data = []
             if "drill_pattern" in df.columns:
-                hover_data = ["drill_pattern", "pozo","duracion", "material_operator"]
+                hover_data.extend(["drill_pattern", "pozo", "duracion", "material_operator"])
+            if "prof. por operador" in df.columns:
+                hover_data.append("prof. por operador")
+            if "elevacion" in df.columns:
+                hover_data.append("elevacion")
+            # Si no hay columnas adicionales, usar None para mostrar solo las básicas
+            if not hover_data:
+                hover_data = None
 
             fig = px.scatter(
                 df,
@@ -46,7 +51,31 @@ class Visualizer:
                 labels={"este": "Este", "norte": "Norte", "dureza": "Dureza"},
                 hover_data=hover_data
             )
-            fig.update_layout(legend_title_text='Dureza')
+            
+            # Agregar grilla de 500x500
+            fig.update_layout(
+                legend_title_text='Dureza',
+                xaxis=dict(
+                    showgrid=True,
+                    gridwidth=1,
+                    gridcolor='rgba(200,200,200,0.3)',  # Gris claro semi-transparente
+                    dtick=500,  # Espaciado de 500 unidades
+                    showline=True,
+                    linewidth=1,
+                    linecolor='black'
+                ),
+                yaxis=dict(
+                    showgrid=True,
+                    gridwidth=1,
+                    gridcolor='rgba(200,200,200,0.3)',  # Gris claro semi-transparente
+                    dtick=500,  # Espaciado de 500 unidades
+                    showline=True,
+                    linewidth=1,
+                    linecolor='black'
+                ),
+                plot_bgcolor='rgba(0,0,0,0)',
+                paper_bgcolor='rgba(0,0,0,0)'
+            )
             logging.info("Gráfica interactiva de ubicación generada correctamente.")
             return fig
         except Exception as e:
@@ -213,12 +242,26 @@ class Visualizer:
 
     @staticmethod
     def plot_3d_scatter(df):
-        required_columns = ['este', 'norte', 'mts plan', 'dureza', "elevacion"]
+        required_columns = ['este', 'norte', 'dureza', "elevacion"]
         for col in required_columns:
             if col not in df.columns:
                 logging.error(f"Falta la columna requerida: {col}")
                 raise ValueError(f"El archivo no contiene la columna '{col}' necesaria para la visualización 3D.")
         try:
+            # Preparar hover data para incluir profundidad y elevación si existen
+            hover_data = []
+            if "prof. por operador" in df.columns:
+                hover_data.append("prof. por operador")
+            if "drill_pattern" in df.columns:
+                hover_data.append("drill_pattern")
+            if "duracion" in df.columns:
+                hover_data.append("duracion")
+            if "elevacion" in df.columns:
+                hover_data.append("elevacion")
+            # Si no hay columnas adicionales, usar None para mostrar solo las básicas
+            if not hover_data:
+                hover_data = None
+                
             fig = px.scatter_3d(
                 df, 
                 x='este', 
@@ -232,7 +275,8 @@ class Visualizer:
                     "norte": "Norte", 
                     "elevacion": "Cota", 
                     "dureza": "Dureza"
-                }
+                },
+                hover_data=hover_data
             )
             
             # Mejorar la visualización 3D con puntos más pequeños
@@ -244,7 +288,34 @@ class Visualizer:
                         up=dict(x=0, y=0, z=1),
                         center=dict(x=0, y=0, z=0),
                         eye=dict(x=1.5, y=1.5, z=1.5)
-                    )
+                    ),
+                    xaxis=dict(
+                        showgrid=True,
+                        gridwidth=1,
+                        gridcolor='rgba(200,200,200,0.3)',  # Gris claro semi-transparente
+                        dtick=500,  # Espaciado de 500 unidades
+                        showline=True,
+                        linewidth=1,
+                        linecolor='black'
+                    ),
+                    yaxis=dict(
+                        showgrid=True,
+                        gridwidth=1,
+                        gridcolor='rgba(200,200,200,0.3)',  # Gris claro semi-transparente
+                        dtick=500,  # Espaciado de 500 unidades
+                        showline=True,
+                        linewidth=1,
+                        linecolor='black'
+                    ),
+                    zaxis=dict(
+                        showgrid=True,
+                        gridwidth=1,
+                        gridcolor='rgba(200,200,200,0.3)',  # Gris claro semi-transparente
+                        showline=True,
+                        linewidth=1,
+                        linecolor='black'
+                    ),
+                    bgcolor='rgba(0,0,0,0)'
                 )
             )
             
@@ -300,9 +371,11 @@ class Visualizer:
                 hovertemplate=(
                     "Este: %{x:.1f}<br>" +
                     "Norte: %{y:.1f}<br>" +
-                    "Índice de Dureza: %{marker.color:.1f}" +
+                    "Índice de Dureza: %{marker.color:.1f}<br>" +
+                    "Elevación: %{customdata[0]:.1f}" +
                     "<extra></extra>"
-                )
+                ),
+                customdata=df[['elevacion']] if 'elevacion' in df.columns else None
             ))
 
             # Configurar el layout
@@ -312,15 +385,25 @@ class Visualizer:
                 paper_bgcolor='rgba(0,0,0,0)',
                 xaxis=dict(
                     title="Este",
-                    showgrid=False,
-                    zeroline=False,
-                    color='white'
+                    showgrid=True,
+                    gridwidth=1,
+                    gridcolor='rgba(200,200,200,0.3)',  # Gris claro semi-transparente
+                    dtick=500,  # Espaciado de 500 unidades
+                    showline=True,
+                    linewidth=1,
+                    linecolor='black',
+                    color='black'
                 ),
                 yaxis=dict(
                     title="Norte",
-                    showgrid=False,
-                    zeroline=False,
-                    color='white'
+                    showgrid=True,
+                    gridwidth=1,
+                    gridcolor='rgba(200,200,200,0.3)',  # Gris claro semi-transparente
+                    dtick=500,  # Espaciado de 500 unidades
+                    showline=True,
+                    linewidth=1,
+                    linecolor='black',
+                    color='black'
                 )
             )
             
