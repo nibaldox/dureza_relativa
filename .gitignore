@@ -60,3 +60,10 @@ htmlcov/
 
 # Archivos específicos del proyecto
 app.log
+
+# Dependencias de Node
+node_modules/
+webapp/node_modules/
+!webapp/*.json
+!webapp/tsconfig.json
+!webapp/tsconfig.node.json
