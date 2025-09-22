@@ -1,140 +1,135 @@
-# Tiempos de Perforación - Clasificador de Pozos
+# Plataforma de Clasificación de Dureza Relativa
 
-Este proyecto es una aplicación desarrollada en Python para procesar y clasificar datos de pozos perforados, y para visualizar dicha información de forma gráfica. La aplicación utiliza Streamlit para la interfaz de usuario, y herramientas de visualización (Plotly) para mostrar resultados de clasificación y ubicación.
+Este repositorio contiene dos implementaciones complementarias para analizar los tiempos de perforación de pozos y clasificarlos según su dureza:
+
+1. **Aplicación Streamlit (Python):** la versión original con la que se procesan archivos CSV y se generan visualizaciones interactivas en Plotly.
+2. **WebApp React (TypeScript):** una interfaz web moderna que replica y extiende las funcionalidades de la app de Streamlit directamente en el navegador.
+
+Ambas experiencias comparten la misma lógica de negocio: normalizar la información de perforación, calcular métricas temporales y presentar gráficos que faciliten la toma de decisiones en terreno.
+
+---
 
 ## Requisitos de Datos
 
-### Columnas Requeridas del CSV
-El archivo CSV de entrada debe contener las siguientes columnas obligatorias:
-- **tiempo inicio**: Fecha y hora de inicio de la perforación (formato datetime o string convertible a datetime)
-- **tiempo final**: Fecha y hora de finalización de la perforación (formato datetime o string convertible a datetime)
-- **este**: Coordenada Este del pozo (valor numérico)
-- **norte**: Coordenada Norte del pozo (valor numérico)
-- **elevacion**: Elevación o cota del pozo (valor numérico)
+Para garantizar que el procesamiento funcione correctamente, cualquier CSV que se cargue (ya sea en la aplicación de Streamlit o en la WebApp) debe respetar la siguiente estructura:
 
-### Columnas Opcionales
-- **drill_pattern**: Patrón de perforación (string) - Utilizado para filtrado de datos
+| Columna         | Tipo esperado            | Descripción                                                                 |
+|-----------------|--------------------------|-----------------------------------------------------------------------------|
+| `tiempo inicio` | Fecha/hora (string o ISO) | Momento en el que inicia la perforación.                                   |
+| `tiempo final`  | Fecha/hora (string o ISO) | Momento en el que termina la perforación.                                  |
+| `este`          | Numérico                  | Coordenada Este del pozo.                                                  |
+| `norte`         | Numérico                  | Coordenada Norte del pozo.                                                 |
+| `elevacion`     | Numérico                  | Elevación (cota) del pozo.                                                 |
+| `drill_pattern` | String (opcional)         | Patrón de perforación utilizado. Se emplea para filtros y agrupaciones.    |
 
-### Columnas Calculadas
-Las siguientes columnas son calculadas automáticamente por el script:
-- **duracion**: Calculada como la diferencia entre tiempo final y tiempo inicio (en minutos)
-- **dureza**: Clasificación categórica según la duración:
-  - Roca suave: < 16 minutos
-  - Roca media: 16-24 minutos
-  - Roca dura: 24-40 minutos
-  - Roca muy dura: > 40 minutos
-- **indice_dureza**: Valor numérico entre 0 y 100 que representa la dureza del pozo:
-  - 0-25: Para tiempos entre 0 y 16 minutos (pendiente lineal)
-  - 25-50: Para tiempos entre 16 y 24 minutos (pendiente lineal)
-  - 50-75: Para tiempos entre 24 y 40 minutos (pendiente lineal)
-  - 75-100: Para tiempos entre 40 y 60 minutos (pendiente lineal)
-  - 100: Para tiempos mayores a 60 minutos (valor máximo)
+Durante el procesamiento se calculan automáticamente:
+
+- **`duracion`**: diferencia en minutos entre `tiempo final` y `tiempo inicio`.
+- **`dureza`**: etiqueta categórica (roca suave, media, dura o muy dura) basada en la duración.
+- **`indice_dureza`**: valor entre 0 y 100 que describe la dureza en escala continua para facilitar comparaciones finas.
+
+---
 
 ## Estructura del Proyecto
 
-El proyecto se encuentra organizado en módulos separados que facilitan el mantenimiento y escalabilidad del código:
-
-- **streamlit_app.py**  
-  Contiene la aplicación principal de Streamlit, que gestiona la interfaz de usuario, la carga de datos, el procesamiento y la visualización.
-
-- **data_processor.py**  
-  Contiene la clase `DataProcessor`, encargada de cargar, procesar y clasificar los datos de entrada (archivos CSV).
-  - Convierte columnas de tiempo a formato datetime.
-  - Calcula la duración en minutos entre "tiempo inicio" y "tiempo final".
-  - Clasifica la dureza del pozo (roca suave, roca media, roca dura, roca muy dura) basándose en la duración.
-
-- **visualizer.py**  
-  Contiene la clase `Visualizer`, la cual genera gráficos a partir de los datos procesados.
-  - `plot_location_interactive`: Genera un scatter plot interactivo para visualizar la ubicación de los pozos.
-  - `plot_dureza_count`: Crea un gráfico de torta para mostrar el conteo de pozos por dureza.
-  - `plot_duracion_box`: Crea un gráfico box plot para la distribución de duración por dureza.
-  - `plot_hardness_heatmap`: Genera un mapa de dispersión 2D que muestra el índice de dureza mediante una escala de colores continua.
-  - `plot_3d_scatter`: Visualiza los pozos en un espacio tridimensional.
-
-- **logs/**  
-  Carpeta (crearse manualmente si no existe) para almacenar el archivo de logging `app.log`, donde se registran eventos y errores.
-
-
-## Requisitos
-
-- Python 3.x
-- Bibliotecas:
-  - pandas
-  - plotly
-  - streamlit
-  - numpy
-
-## Cómo Ejecutar la Aplicación
-
-1. Asegúrate de tener instaladas las dependencias necesarias:
-
-```bash
-pip install pandas plotly streamlit numpy
+```text
+├── data_processor.py          # Lógica de normalización y clasificación (Python)
+├── streamlit_app.py           # UI original construida con Streamlit
+├── visualizer.py              # Gráficos Plotly reutilizables
+├── webapp/                    # Nuevo frontend en React + TypeScript + Vite
+│   ├── src/
+│   │   ├── components/        # Componentes reutilizables (ej. cargador de CSV)
+│   │   ├── styles/            # Hojas de estilo CSS
+│   │   └── utils/             # Procesamiento de datos y generación de gráficos
+│   ├── index.html             # Punto de entrada HTML
+│   └── package.json           # Scripts de desarrollo y dependencias
+└── requirements.txt           # Dependencias Python para la app Streamlit
 ```
 
-2. Prepara tu archivo CSV asegurándote de que contenga las columnas requeridas con los nombres exactos:
-   - tiempo inicio
-   - tiempo final
-   - este
-   - norte
-   - elevacion
-   - drill_pattern (opcional)
+---
 
-3. Coloca tu archivo CSV en el directorio **input-data/** (o en cualquier ubicación a la que apuntes durante la ejecución).
+## Guía Rápida de Uso
 
-4. Ejecuta la aplicación desde la terminal:
+### 1. Aplicación Streamlit
 
-```bash
-streamlit run streamlit_app.py
-```
+1. Crear y activar un entorno virtual de Python (opcional pero recomendado).
+2. Instalar dependencias:
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. Ejecutar la interfaz:
+   ```bash
+   streamlit run streamlit_app.py
+   ```
+4. Cargar el CSV con la estructura descrita y explorar los gráficos interactivos:
+   - Conteo por dureza.
+   - Dispersión espacial (2D y 3D).
+   - Boxplot de duración.
+   - Heatmap de índices de dureza.
 
-5. Usa la interfaz de Streamlit para:
-   - **Cargar CSV:** Selecciona el archivo CSV que contiene las columnas requeridas.
-   - **Visualizar gráficos:** Explora los datos a través de los gráficos interactivos disponibles.
-   - **Filtro por Drill Pattern:** Filtra los resultados por el valor de la columna "drill_pattern" si está disponible.
-   - **Ajuste de Detalle:** Controla el nivel de detalle del mapa de densidad 3D en tiempo real.
-   - **Visualización 3D:** Explora la distribución espacial de los pozos en tres dimensiones.
+### 2. WebApp React
 
-## Características de Visualización
+1. Instalar dependencias de Node.js (se requiere Node 18+):
+   ```bash
+   cd webapp
+   npm install
+   ```
+   > Nota: En este entorno de ejecución no se dispone de acceso a internet, por lo que la instalación puede fallar. Para trabajar localmente, ejecutar el comando en un entorno con conexión.
+2. Ejecutar servidor de desarrollo:
+   ```bash
+   npm run dev
+   ```
+3. Abrir el navegador en la URL indicada por Vite y utilizar la interfaz para cargar y analizar los CSV.
 
-### Mapa de Índice de Dureza
-- Visualización 2D con escala de colores continua
-- Escala de colores intuitiva:
-  - Verde: Roca muy suave (0-25)
-  - Amarillo: Roca suave (25-50)
-  - Naranja: Roca media (50-75)
-  - Rojo: Roca dura (75-100)
-- Información detallada al pasar el cursor sobre los puntos
-- Barra de escala con etiquetas descriptivas
-- Fondo transparente para mejor visualización
+---
 
-### Mapa de Densidad 3D
-- Visualiza la concentración de pozos por tipo de dureza en un espacio tridimensional.
-- Control deslizante para ajustar el nivel de detalle en tiempo real.
-- Colores distintivos para cada tipo de dureza.
-- Interactividad completa para rotar, hacer zoom y explorar los datos.
+## Plan de Pruebas
 
-### Visualización 3D de Pozos
-- Representa cada pozo en el espacio usando coordenadas este, norte y elevación.
-- Puntos coloreados según la dureza del pozo.
-- Tamaño de puntos optimizado para mejor visualización.
-- Controles interactivos para explorar la distribución espacial.
+El proyecto aún no cuenta con pruebas automatizadas. A continuación se describe el plan para incorporarlas de forma incremental.
 
-## Notas
+### Python / Streamlit
 
-- Asegúrate de que los nombres de las columnas del CSV coincidan exactamente con los nombres requeridos (tiempo inicio, tiempo final, este, norte, elevacion).
-- Los nombres de las columnas se convertirán automáticamente a minúsculas durante el procesamiento.
-- La aplicación realiza validación de columnas y manejo de errores para ayudar a identificar problemas con el archivo de entrada.
-- El índice de dureza proporciona una medida continua y más precisa de la dureza que la clasificación categórica.
-- Los mapas de densidad 3D pueden requerir más recursos del sistema dependiendo del nivel de detalle seleccionado.
-- Las visualizaciones son completamente interactivas y permiten una exploración detallada de los datos.
+1. **Pruebas unitarias (pytest):**
+   - Verificar la correcta lectura de CSVs válidos e inválidos en `DataProcessor`.
+   - Asegurar el cálculo correcto de `duracion`, `dureza` e `indice_dureza` para distintos escenarios límite (ej. tiempos negativos, datos faltantes).
+   - Confirmar que los filtros por `drill_pattern` funcionen y que el resultado preserve la estructura esperada.
+2. **Pruebas de integración ligera:**
+   - Utilizar `streamlit.testing` o `pytest` con `requests` para simular la carga de archivos y validar que los gráficos se generan sin excepciones.
+3. **Validación de regresión de datos:**
+   - Mantener un conjunto pequeño de CSVs de ejemplo en `tests/fixtures` y comparar salidas agregadas (conteos, promedios, rangos) contra snapshots aprobados.
 
-## Ejemplo de Formato CSV
-```csv
-tiempo inicio,tiempo final,este,norte,elevacion,drill_pattern
-2024/09/06 19:52,2024/09/06 20:10,648.705,175.765,38.38,PW30
-```
+### React / TypeScript
 
-## Licencia
+1. **Configuración de Vitest + React Testing Library:**
+   - Ejecutar `npm install -D vitest @testing-library/react @testing-library/user-event @testing-library/jest-dom`.
+2. **Pruebas unitarias de utilidades (`src/utils`):**
+   - Validar que `dataProcessor` transforme los datasets y calcule métricas igual que la versión Python.
+   - Comprobar que los generadores de gráficas (`charts.ts`) produzcan configuraciones de Plotly coherentes (ejes, títulos, escalas de color).
+3. **Pruebas de componentes:**
+   - Testear `DataUploader` para asegurar que maneje archivos correctos e inválidos, y que propague eventos al `App`.
+   - Simular la interacción completa de carga y filtrado para detectar regresiones en la UI.
+4. **Pruebas end-to-end (opcional):**
+   - Integrar Playwright o Cypress para automatizar un flujo básico: cargar CSV, ajustar filtros y verificar la presencia de gráficos clave.
 
-Este proyecto se distribuye bajo licencia MIT.
+### Automatización y CI
+
+- Configurar GitHub Actions con dos jobs:
+  1. `python-tests`: instala dependencias, ejecuta `pytest` y reporta cobertura.
+  2. `webapp-tests`: usa Node 18, instala paquetes, corre `npm run lint` y `npm test` (Vitest) en modo `--run`.
+- Agregar validaciones de formato (por ejemplo, `ruff` para Python y `eslint`/`prettier` para TypeScript) para mantener un estilo consistente.
+
+---
+
+## Recursos Adicionales
+
+- `EJEMPLO_README.md`: versión previa del README con información detallada sobre visualizaciones disponibles.
+- `ejemplo_datos.txt`: ejemplo mínimo de archivo CSV.
+- `app.log`: archivo de logs generado por la ejecución de la app de Streamlit (se crea automáticamente si se habilita el logging).
+
+---
+
+## Próximos Pasos
+
+- Migrar la lógica de procesamiento compartido a un paquete común reutilizable (por ejemplo, publicar una librería Python/TypeScript con cálculos idénticos).
+- Implementar el plan de pruebas descrito y activar la integración continua.
+- Documentar decisiones de diseño y criterios de aceptación en un `CONTRIBUTING.md` para facilitar aportes externos.
