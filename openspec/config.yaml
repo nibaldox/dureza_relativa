@@ -1,0 +1,76 @@
+schema: spec-driven
+project: dureza_relativa
+detected_at: 2026-07-10
+artifact_store: openspec
+
+context: |
+  Bilingual Streamlit + React/TypeScript app for Vickers-style drill hardness
+  classification. CSV in -> classified + visualized output.
+  - Python layer: Streamlit UI + pandas + Plotly data pipeline
+    (`streamlit_app.py`, `data_processor.py`, `visualizer.py`).
+  - Web layer: React 18 + TypeScript + Vite frontend that mirrors the same
+    business logic in TypeScript (`webapp/src/App.tsx`,
+    `webapp/src/utils/dataProcessor.ts`, `webapp/src/utils/charts.ts`).
+  - Both layers MUST produce identical hardness classifications to honor
+    the project goal of shared business logic across stacks.
+
+strict_tdd: false
+python_version: "3.14.6"
+node_version: ">=18 (per README)"
+primary_entry_points:
+  python: streamlit_app.py
+  webapp: webapp/src/main.tsx
+  webapp_html: webapp/index.html
+
+testing:
+  has_tests: false
+  test_command: ""
+  coverage_tool: none
+  coverage_command: ""
+  last_run_result: "no tests executed; pytest not installed (`python3 -m pytest` -> ModuleNotFoundError)"
+  notes: |
+    Repository has zero automated tests despite a written plan in the README.
+    Python layer depends on streamlit, pandas, plotly, numpy, matplotlib,
+    python-dateutil. None of them are installed in this environment either.
+    Webapp has no Vitest/Testing Library config and no npm test script.
+    Strict TDD is disabled until at least one test runner works.
+
+quality:
+  linter: none
+  type_checker:
+    python: none
+    typescript: "tsc --noEmit (webapp lint script)"
+  formatter: none
+  ci: none
+
+rules:
+  proposal:
+    - Include rollback plan whenever a change touches classification thresholds, schema parsing, or shared business logic in both stacks.
+    - When changing classification rules, document how Python and TypeScript implementations stay in sync.
+  specs:
+    - Use Given/When/Then for scenarios.
+    - Use RFC 2119 keywords (MUST, SHALL, SHOULD, MAY).
+    - For cross-stack parity, REQUIRE both Python and TypeScript implementations in delta specs.
+  design:
+    - Document sequence diagrams for CSV ingestion and classification flows.
+    - Justify any divergence between Python and TypeScript implementations.
+    - Capture parity-test strategy when shared business logic is involved.
+  tasks:
+    - Group by phase, use hierarchical numbering.
+    - Keep tasks completable in one session.
+    - Pair each task that changes classification logic with an explicit parity-check task.
+  apply:
+    tdd: false
+    test_command: ""
+    follow_existing_patterns: true
+    do_not_touch_unrelated_files: true
+  verify:
+    test_command: ""
+    build_command: ""
+    coverage_threshold: 0
+    manual_checks:
+      - "python -m streamlit run streamlit_app.py (smoke)"
+      - "cd webapp && npm run build (TypeScript + Vite build)"
+  archive:
+    - Warn before merging destructive deltas.
+    - Verify Python/TypeScript parity before archiving cross-stack changes.

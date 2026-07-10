@@ -35,7 +35,7 @@ const safeParseNumber = (value: string | number | null | undefined): number | un
   return Number.isFinite(parsed) ? parsed : undefined;
 };
 
-const classifyDuration = (minutes: number): WellRecord['dureza'] => {
+export const classifyDuration = (minutes: number): WellRecord['dureza'] => {
   if (minutes < 16) {
     return 'roca suave';
   }
@@ -48,7 +48,7 @@ const classifyDuration = (minutes: number): WellRecord['dureza'] => {
   return 'roca muy dura';
 };
 
-const hardnessIndex = (minutes: number): number => {
+export const hardnessIndex = (minutes: number): number => {
   if (minutes < 0) {
     return 0;
   }

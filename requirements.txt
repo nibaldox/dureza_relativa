@@ -1,13 +1,4 @@
-# Bibliotecas principales
-streamlit
-pandas
-plotly
-numpy
-# Visualización
-matplotlib
-
-# Manejo de datos y tipos
-typing-extensions
-python-dateutil
-
-
+pandas>=2.0
+numpy>=1.24
+plotly>=5.18
+streamlit>=1.30

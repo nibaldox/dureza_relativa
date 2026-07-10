@@ -120,6 +120,41 @@ El proyecto aún no cuenta con pruebas automatizadas. A continuación se describ
 
 ---
 
+## Cómo ejecutar las pruebas
+
+Ambas stacks tienen runners declarados y configurados. Las pruebas se ejecutan localmente; la automatización en CI llega en el cambio siguiente `bootstrap-ci`.
+
+### Python (pytest)
+
+```bash
+python3 -m venv .venv
+.venv/bin/pip install -r requirements-dev.txt
+.venv/bin/pytest -q
+```
+
+Suite actual:
+
+- `tests/test_classification.py` — smoke sobre las funciones puras extraídas en `classification.py` (9 boundaries + 11 segments).
+- `tests/test_parity.py` — parity contra `tests/fixtures/parity/classification_cases.json`.
+- `tests/test_data_processor_io.py` — verifica que importar `data_processor` bajo el `conftest.py` no escriba `app.log`.
+
+### TypeScript (Vitest)
+
+```bash
+cd webapp
+npm install
+npm test
+```
+
+Suite actual:
+
+- `webapp/src/utils/__tests__/dataProcessor.test.ts` — smoke sobre `classifyDuration` / `hardnessIndex` exportadas.
+- `webapp/src/utils/__tests__/parity.test.ts` — parity contra el fixture compartido vía symlink.
+
+> Nota: la integración continua (GitHub Actions con dos jobs: `python-tests` y `webapp-tests`) se publica en el follow-up `bootstrap-ci`, no en este slice.
+
+---
+
 ## Recursos Adicionales
 
 - `EJEMPLO_README.md`: versión previa del README con información detallada sobre visualizaciones disponibles.
