@@ -1,6 +1,8 @@
 import logging
 import pandas as pd
 
+from classification import classify_duracion, hardness_index
+
 # Configuración básica para logging
 logging.basicConfig(filename="app.log", level=logging.DEBUG,
                     format="%(asctime)s %(levelname)s %(message)s")
@@ -11,7 +13,29 @@ class DataProcessor:
     def load_and_process(self, file_path):
         logging.info(f"Iniciando carga del archivo: {file_path}")
         try:
-            df = pd.read_csv(file_path)
+            try:
+                df = pd.read_csv(file_path)
+            except pd.errors.ParserError:
+                import warnings as _warnings
+
+                with _warnings.catch_warnings(record=True) as captured:
+                    _warnings.simplefilter("always")
+                    df = pd.read_csv(
+                        file_path,
+                        engine="python",
+                        on_bad_lines="warn",
+                    )
+                bad_lines = sum(
+                    1
+                    for w in captured
+                    if "Skipping" in str(w.message)
+                )
+                if bad_lines:
+                    logging.warning(
+                        "Se descartaron %d filas con esquema inválido "
+                        "(campos extra o faltantes respecto al header).",
+                        bad_lines,
+                    )
         except Exception as e:
             logging.exception("Error leyendo el archivo")
             raise Exception(f"Error al leer el archivo: {e}")
@@ -45,46 +69,7 @@ class DataProcessor:
         return df
 
     def classify_duracion(self, minutos):
-        if minutos < 16:
-            return "roca suave"
-        elif minutos < 24:
-            return "roca media"
-        elif minutos < 40:
-            return "roca dura"
-        else:
-            return "roca muy dura"
+        return classify_duracion(minutos)
 
     def hardness_index(self, T):
-        """
-        Calcula el Índice de Dureza (HI) en función del tiempo de perforación (T, en minutos).
-        HI varía de 0 a 100 según los siguientes tramos:
-          - 0 <= T <= 16  -> [0, 25]
-          - 16 < T <= 24  -> [25, 50]
-          - 24 < T <= 40  -> [50, 75]
-          - 40 < T <= 60  -> [75, 100]
-          - T > 60        -> 100 (saturado)
-        
-        Parámetros:
-        ----------
-        T : float
-            Tiempo de perforación en minutos (no debe ser negativo).
-        
-        Retorna:
-        --------
-        float
-            Valor del índice de dureza (entre 0 y 100).
-        """
-        if T < 0:
-            # Manejo básico de casos "atípicos" o inválidos
-            return 0.0
-        elif T <= 16:
-            return 25.0 * (T / 16.0)
-        elif T <= 24:
-            return 25.0 + 25.0 * ((T - 16.0) / 8.0)
-        elif T <= 40:
-            return 50.0 + 25.0 * ((T - 24.0) / 16.0)
-        elif T <= 60:
-            return 75.0 + 25.0 * ((T - 40.0) / 20.0)
-        else:
-            # Para T > 60, se fija en 100
-            return 100.0
+        return hardness_index(T)
