@@ -67,3 +67,10 @@ webapp/node_modules/
 !webapp/*.json
 !webapp/tsconfig.json
 !webapp/tsconfig.node.json
+
+# Test fixtures compartidos (symlink TS + JSON canónico de paridad)
+!tests/fixtures/**/*.json
+!webapp/src/utils/__tests__/fixtures/classification_cases.json
+
+# Estado interno del agente (opencode)
+.atl/
