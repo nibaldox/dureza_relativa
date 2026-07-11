@@ -61,9 +61,10 @@ def main() -> None:
                 
                 # Filtro por Fecha
                 st.subheader("Filtro por Fecha")
-                # Convertir 'tiempo inicio' a datetime si no lo está ya
-                df_processed['tiempo inicio'] = pd.to_datetime(df_processed['tiempo inicio'])
-                
+                # 'tiempo inicio' ya viene tipado como datetime desde data_processor.py:54.
+                # No se reasigna aquí porque cargar_datos está memoizado con @st.cache_data
+                # y mutar el resultado cacheado corrompe invocaciones futuras.
+
                 # Obtener fechas mínima y máxima
                 min_date = df_processed['tiempo inicio'].min().date()
                 max_date = df_processed['tiempo inicio'].max().date()
@@ -147,14 +148,14 @@ def main() -> None:
                 with col1:
                     st.subheader("Distribución de Duración por Dureza (Box Plot)")
                     fig_box: px.Figure = Visualizer.plot_duracion_box(df_filtrado)
-                    st.plotly_chart(fig_box, use_container_width=True, key="box_plot")
+                    st.plotly_chart(fig_box, key="box_plot")
 
             # Gráfico Torta (col2, fila 1)
             if mostrar_torta:
                 with col2:
                     st.subheader("Tiempo Promedio por Dureza (Torta)")
                     fig_pie: px.Figure = Visualizer.plot_dureza_count(df_filtrado)
-                    st.plotly_chart(fig_pie, use_container_width=True, key="pie_chart")
+                    st.plotly_chart(fig_pie, key="pie_chart")
 
             # Gráfico de Ubicación y Mapa de Densidad (fila 2)
             col1, col2 = st.columns(2)
@@ -162,21 +163,21 @@ def main() -> None:
                 with col1:
                     st.subheader("Ubicación de Pozos")
                     fig_ubicacion_filtrado: px.Figure = Visualizer.plot_location_interactive(df_filtrado)
-                    st.plotly_chart(fig_ubicacion_filtrado, use_container_width=True, key="filtered_location")
+                    st.plotly_chart(fig_ubicacion_filtrado, key="filtered_location")
 
             # Mapa de Dureza 3D
             if mostrar_mapa_dureza:
                 with col2:
                     st.subheader("Mapa de Índice de Dureza 3D")
                     fig_hardness: px.Figure = Visualizer.plot_hardness_heatmap(df_filtrado, bin_size=detalle_mapa)
-                    st.plotly_chart(fig_hardness, use_container_width=True, key="hardness_map")
+                    st.plotly_chart(fig_hardness, key="hardness_map")
 
             # Visualización 3D a ancho completo
             if mostrar_3d_scatter:
                 st.subheader("Visualización 3D de Pozos")
                 fig_3d_scatter: px.Figure = Visualizer.plot_3d_scatter(df_filtrado)
                 # Usar el ancho completo de la pantalla
-                st.plotly_chart(fig_3d_scatter, use_container_width=True, key="3d_scatter")
+                st.plotly_chart(fig_3d_scatter, key="3d_scatter")
 
         except ValueError as ve:
             st.error(f"Error de validación: {ve}")
