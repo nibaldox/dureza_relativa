@@ -185,13 +185,12 @@ class Visualizer:
         return fig
 
     @staticmethod
-    def plot_hardness_heatmap(df, bin_size: float = 2.0):
+    def plot_hardness_heatmap(df):
         """
         Genera un mapa de dispersión 2D basado en el índice de dureza.
 
         Args:
-            df (pd.DataFrame): DataFrame con las columnas 'este', 'norte' y 'indice_dureza'
-            bin_size (float): No se usa en esta versión pero se mantiene por compatibilidad
+            df (pd.DataFrame): DataFrame con las columnas 'este', 'norte' e 'indice_dureza'
 
         Returns:
             go.Figure: Figura de Plotly con el mapa de dispersión 2D

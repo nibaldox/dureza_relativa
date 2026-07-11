@@ -128,20 +128,6 @@ def main() -> None:
             mostrar_mapa_dureza: bool = st.sidebar.checkbox("Mostrar mapa de dureza", value=True)
             mostrar_3d_scatter: bool = st.sidebar.checkbox("Mostrar visualización 3D", value=True)
 
-            # Ajuste de detalle para el mapa de dureza
-            detalle_mapa: float = 2.0
-            if mostrar_mapa_dureza:
-                with st.sidebar:
-                    st.subheader("Ajustes del mapa de dureza")
-                    detalle_mapa = st.slider(
-                        "Nivel de detalle",
-                        min_value=0.5,
-                        max_value=10.0,
-                        value=2.0,
-                        step=0.5,
-                        help="Ajusta el nivel de detalle del mapa. Valores más bajos dan mayor detalle."
-                    )
-
             # Crear la grilla de 2x2
             col1, col2 = st.columns(2)
 
