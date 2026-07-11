@@ -3,6 +3,17 @@ import math
 
 import pandas as pd
 
+# Workaround: pandas 3.0 defaults to pyarrow-backed string columns
+# (future.infer_string=True). Arrow strings trigger SIGSEGV in
+# Streamlit's native Plotly rendering pipeline (pyarrow 25.x + plotly
+# 6.9 + streamlit 1.59) during reruns with large datasets. Disabling
+# Arrow string inference forces plain Python str (object dtype),
+# avoiding the native crash without changing observable behavior.
+try:
+    pd.set_option("future.infer_string", False)
+except Exception:
+    pass
+
 # PARITY-DEBT: webapp/src/utils/dataProcessor.ts:processCsvData — this
 # adapter wraps the pure functions in `classification.py` and the
 # migration ticket is tracked in the parity spec. Keep the DataFrame
