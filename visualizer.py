@@ -21,13 +21,6 @@ class Visualizer:
             if col not in df.columns:
                 logging.error(f"Falta la columna requerida: {col}")
                 raise ValueError(f"El archivo no contiene la columna '{col}' necesaria para la visualización interactiva.")
-        # Definir mapeo de colores desaturados para Plotly
-        color_mapping = {
-            "roca suave": "#98FB98",    # verde menta pastel
-            "roca media": "#FFD700",    # amarillo más cercano al original
-            "roca dura": "#e74c3c",      # rojo más oscuro
-            "roca muy dura": "#BA55D3"   # lavanda más brillante, cercano al original
-        }
         # Preparar hover data para incluir drill pattern, profundidad y elevación si existen
         hover_data = []
         if "drill_pattern" in df.columns:
@@ -45,7 +38,7 @@ class Visualizer:
             x='este',
             y='norte',
             color='dureza',
-            color_discrete_map=color_mapping,
+            color_discrete_map=Visualizer.COLOR_MAPPING,
             title="Ubicación Interactiva de Pozos (Este vs Norte)",
             labels={"este": "Este", "norte": "Norte", "dureza": "Dureza"},
             hover_data=hover_data
@@ -84,19 +77,12 @@ class Visualizer:
         conteo_dureza = df['dureza'].value_counts().reset_index()
         conteo_dureza.columns = ['dureza', 'conteo']
 
-        # Mapeo de colores desaturados para Plotly
-        color_mapping = {
-            "roca suave": "#98FB98",    # verde menta pastel
-            "roca media": "#FFD700",    # amarillo más cercano al original
-            "roca dura": "#8B0000",      # rojo pastel
-            "roca muy dura": "#BA55D3"   # lavanda más brillante, cercano al original
-        }
         fig = px.pie(
             conteo_dureza,
             names='dureza',
             values='conteo',
             color='dureza',
-            color_discrete_map=color_mapping,
+            color_discrete_map=Visualizer.COLOR_MAPPING,
             title='Conteo de Pozos por Dureza'
         )
         logging.info("Gráfica de torta de conteo de pozos por dureza generada correctamente.")
@@ -104,20 +90,12 @@ class Visualizer:
 
     @staticmethod
     def plot_duracion_box(df):
-        # Definir mapeo de colores desaturados para Plotly
-        color_mapping = {
-            "roca suave": "#98FB98",    # verde menta pastel
-            "roca media": "#FFD700",    # amarillo más cercano al original
-            "roca dura": "#FFA07A",      # rojo pastel
-            "roca muy dura": "#BA55D3"   # lavanda más brillante, cercano al original
-        }
-
         fig = px.box(
             df,
             x="dureza",
             y="duracion",
             color="dureza",
-            color_discrete_map=color_mapping,
+            color_discrete_map=Visualizer.COLOR_MAPPING,
             title="Distribución de Duración por Dureza",
             labels={"duracion": "Duración (minutos)", "dureza": "Dureza"},
             hover_data=["drill_pattern"]
