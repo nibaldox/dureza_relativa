@@ -266,3 +266,107 @@ class Visualizer:
 
         logging.info("Mapa de dispersión de índice de dureza generado correctamente")
         return fig
+
+    # PARITY-DEBT: webapp/src/utils/charts.ts:plotPenetrationRateByRig —
+    # the per-rig box plots depend on the rig column and the parity
+    # surface; when the TS port lands it must consume the same
+    # canonical COLOR_MAPPING and skip silently on missing columns.
+
+    @staticmethod
+    def plot_penetration_rate_by_rig(df):
+        """Box plot of `tasa_penetracion` grouped by `perforadora`.
+
+        Returns `None` when the rig column is absent (per R-8 silent
+        skip). Raises `ValueError` when other required columns are
+        missing — those are programmer errors, not data absences.
+
+        Reuses the canonical `COLOR_MAPPING` so the visual vocabulary
+        stays consistent across every chart.
+        """
+        if "perforadora" not in df.columns:
+            logging.info(
+                "plot_penetration_rate_by_rig: columna 'perforadora' ausente; "
+                "se omite sin error."
+            )
+            return None
+        required = ["tasa_penetracion", "perforadora"]
+        for col in required:
+            if col not in df.columns:
+                raise ValueError(
+                    f"El archivo no contiene la columna '{col}' necesaria "
+                    "para el box plot por perforadora."
+                )
+        fig = px.box(
+            df,
+            x="perforadora",
+            y="tasa_penetracion",
+            color="perforadora",
+            title="Distribución de tasa de penetración por perforadora",
+            labels={
+                "perforadora": "Perforadora",
+                "tasa_penetracion": "Tasa de penetración (m/min)",
+            },
+            # Apply the canonical color palette to the per-rig traces so
+            # the visual vocabulary stays consistent across every chart.
+            color_discrete_sequence=Visualizer._rig_color_sequence(df),
+        )
+        logging.info(
+            "Box plot de tasa de penetración por perforadora generado correctamente."
+        )
+        return fig
+
+    @staticmethod
+    def plot_hardness_by_rig(df):
+        """Box plot of `indice_dureza` grouped by `perforadora`.
+
+        Returns `None` when the rig column is absent. Raises
+        `ValueError` when the hardness or rig column is missing.
+        """
+        if "perforadora" not in df.columns:
+            logging.info(
+                "plot_hardness_by_rig: columna 'perforadora' ausente; "
+                "se omite sin error."
+            )
+            return None
+        required = ["indice_dureza", "perforadora"]
+        for col in required:
+            if col not in df.columns:
+                raise ValueError(
+                    f"El archivo no contiene la columna '{col}' necesaria "
+                    "para el box plot de dureza por perforadora."
+                )
+        fig = px.box(
+            df,
+            x="perforadora",
+            y="indice_dureza",
+            color="perforadora",
+            title="Distribución de índice de dureza por perforadora",
+            labels={
+                "perforadora": "Perforadora",
+                "indice_dureza": "Índice de dureza",
+            },
+            color_discrete_sequence=Visualizer._rig_color_sequence(df),
+        )
+        logging.info(
+            "Box plot de índice de dureza por perforadora generado correctamente."
+        )
+        return fig
+
+    @staticmethod
+    def _rig_color_sequence(df):
+        """Cycle through `COLOR_MAPPING` values to color per-rig traces.
+
+        Plotly's `color_discrete_sequence` accepts a flat list of
+        colors. We rotate through the canonical `COLOR_MAPPING` so the
+        palette stays consistent with the rest of the visualizer while
+        supporting arbitrary numbers of rigs.
+        """
+        palette = list(Visualizer.COLOR_MAPPING.values())
+        rigs = (
+            sorted(df["perforadora"].dropna().astype(str).unique())
+            if "perforadora" in df.columns
+            else []
+        )
+        if not rigs:
+            return palette
+        return [palette[i % len(palette)] for i in range(len(rigs))]
