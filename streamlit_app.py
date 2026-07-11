@@ -170,3 +170,6 @@ def main() -> None:
             st.error(f"Error al procesar o visualizar los datos: {e}")
     else:
         st.info("Esperando que se suba un archivo CSV.")
+
+
+main()
