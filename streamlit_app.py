@@ -8,13 +8,10 @@ from typing import Optional
 from io import BytesIO
 
 # Configuración para que la página use todo el ancho
-st.set_page_config(layout="wide")
+st.set_page_config(layout="wide", page_title="Clasificador de Pozos", page_icon=":material/analytics:")
 
-# Intenta detectar el tema del navegador
-try:
-    streamlit_theme = st.get_option("theme.base")
-except Exception:
-    streamlit_theme = "light"
+# Detectar el tema activo (siempre "light" porque .streamlit/config.toml lo fija).
+streamlit_theme = st.context.theme.type
 
 
 @st.cache_data
@@ -49,21 +46,6 @@ def main() -> None:
         - Fila 2: Ubicación de Pozos (con y sin filtro).
     - Filtrar por drill pattern.
     """)
-
-    # Aplicar estilos personalizados
-    st.markdown(
-        """
-        <style>
-        .css-1aumxhk {
-            background-color: #f0f2f6;
-        }
-        .css-ffhzg2 {
-            color: #333333;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
 
     # Subir archivo CSV
     uploaded_file: Optional[BytesIO] = st.file_uploader("Carga tu archivo CSV", type="csv")
