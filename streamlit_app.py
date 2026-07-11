@@ -3,7 +3,6 @@ import pandas as pd
 from data_processor import DataProcessor
 from visualizer import Visualizer
 import plotly.express as px
-import plotly.graph_objects as go
 from typing import Optional
 from io import BytesIO
 
@@ -59,8 +58,8 @@ def main() -> None:
             with st.sidebar:
                 st.header("Filtros")
                 
-                # Filtro por Fecha
-                st.subheader("Filtro por Fecha")
+                # Filtro por fecha
+                st.subheader("Filtro por fecha")
                 # 'tiempo inicio' ya viene tipado como datetime desde data_processor.py:54.
                 # No se reasigna aquí porque cargar_datos está memoizado con @st.cache_data
                 # y mutar el resultado cacheado corrompe invocaciones futuras.
@@ -68,7 +67,7 @@ def main() -> None:
                 # Obtener fechas mínima y máxima
                 min_date = df_processed['tiempo inicio'].min().date()
                 max_date = df_processed['tiempo inicio'].max().date()
-                
+
                 # Crear selector de rango de fechas
                 date_range = st.date_input(
                     "Selecciona rango de fechas",
@@ -76,7 +75,7 @@ def main() -> None:
                     min_value=min_date,
                     max_value=max_date
                 )
-                
+
                 # Asegurar que tenemos dos fechas para el rango
                 if len(date_range) == 2:
                     start_date, end_date = date_range
@@ -84,17 +83,20 @@ def main() -> None:
                     start_date = pd.to_datetime(start_date)
                     end_date = pd.to_datetime(end_date).replace(hour=23, minute=59, second=59)
                 else:
-                    # Si solo se selecciona una fecha, usar esa como inicio y fin
-                    start_date = pd.to_datetime(date_range[0])
-                    end_date = pd.to_datetime(date_range[0]).replace(hour=23, minute=59, second=59)
+                    # Selección parcial: el usuario solo cliqueó una fecha. Pedimos el rango
+                    # completo y detenemos el rerun hasta que se complete; sin esto, el
+                    # fallback anterior aplicaba start=end=esa fecha en silencio, mostrando
+                    # datos del día único sin avisar al usuario.
+                    st.info("Selecciona el rango completo de fechas para continuar.")
+                    st.stop()
 
             # Filtro por drill pattern
             if "drill_pattern" in df_processed.columns:
                 with st.sidebar:
-                    st.subheader("Filtro por Drill Pattern")
+                    st.subheader("Filtro por drill pattern")
                     # Ordenar la lista de drill patterns en orden descendente
                     drill_patterns: list = sorted(df_processed["drill_pattern"].astype(str).unique(), reverse=True)
-                    drill_pattern_seleccionado: list = st.multiselect("Selecciona Drill Patterns:", drill_patterns)
+                    drill_pattern_seleccionado: list = st.multiselect("Selecciona drill patterns:", drill_patterns)
 
                     if drill_pattern_seleccionado:
                         df_filtrado: pd.DataFrame = df_processed[
@@ -119,20 +121,20 @@ def main() -> None:
             st.info(f"Mostrando datos desde {start_date.strftime('%Y-%m-%d')} hasta {end_date.strftime('%Y-%m-%d')}")
 
             # Opciones de visualización
-            st.sidebar.header("Opciones de Visualización")
-            mostrar_box_plot: bool = st.sidebar.checkbox("Mostrar Box Plot", value=True)
-            mostrar_torta: bool = st.sidebar.checkbox("Mostrar Gráfico de Torta", value=True)
-            mostrar_ubicacion_equipo: bool = st.sidebar.checkbox("Mostrar Gráficos de Ubicación", value=True)
-            mostrar_mapa_dureza: bool = st.sidebar.checkbox("Mostrar Mapa de Dureza", value=True)
-            mostrar_3d_scatter: bool = st.sidebar.checkbox("Mostrar Visualización 3D", value=True)
+            st.sidebar.header("Opciones de visualización")
+            mostrar_box_plot: bool = st.sidebar.checkbox("Mostrar box plot", value=True)
+            mostrar_torta: bool = st.sidebar.checkbox("Mostrar gráfico de torta", value=True)
+            mostrar_ubicacion_equipo: bool = st.sidebar.checkbox("Mostrar gráficos de ubicación", value=True)
+            mostrar_mapa_dureza: bool = st.sidebar.checkbox("Mostrar mapa de dureza", value=True)
+            mostrar_3d_scatter: bool = st.sidebar.checkbox("Mostrar visualización 3D", value=True)
 
             # Ajuste de detalle para el mapa de dureza
             detalle_mapa: float = 2.0
             if mostrar_mapa_dureza:
                 with st.sidebar:
-                    st.subheader("Ajustes del Mapa de Dureza")
+                    st.subheader("Ajustes del mapa de dureza")
                     detalle_mapa = st.slider(
-                        "Nivel de Detalle",
+                        "Nivel de detalle",
                         min_value=0.5,
                         max_value=10.0,
                         value=2.0,
@@ -146,14 +148,14 @@ def main() -> None:
             # Gráfico Box Plot (col1, fila 1)
             if mostrar_box_plot:
                 with col1:
-                    st.subheader("Distribución de Duración por Dureza (Box Plot)")
+                    st.subheader("Distribución de duración por dureza (box plot)")
                     fig_box: px.Figure = Visualizer.plot_duracion_box(df_filtrado)
                     st.plotly_chart(fig_box, key="box_plot")
 
             # Gráfico Torta (col2, fila 1)
             if mostrar_torta:
                 with col2:
-                    st.subheader("Tiempo Promedio por Dureza (Torta)")
+                    st.subheader("Tiempo promedio por dureza (torta)")
                     fig_pie: px.Figure = Visualizer.plot_dureza_count(df_filtrado)
                     st.plotly_chart(fig_pie, key="pie_chart")
 
@@ -161,20 +163,20 @@ def main() -> None:
             col1, col2 = st.columns(2)
             if mostrar_ubicacion_equipo:
                 with col1:
-                    st.subheader("Ubicación de Pozos")
+                    st.subheader("Ubicación de pozos")
                     fig_ubicacion_filtrado: px.Figure = Visualizer.plot_location_interactive(df_filtrado)
                     st.plotly_chart(fig_ubicacion_filtrado, key="filtered_location")
 
             # Mapa de Dureza 3D
             if mostrar_mapa_dureza:
                 with col2:
-                    st.subheader("Mapa de Índice de Dureza 3D")
-                    fig_hardness: px.Figure = Visualizer.plot_hardness_heatmap(df_filtrado, bin_size=detalle_mapa)
+                    st.subheader("Mapa de índice de dureza 3D")
+                    fig_hardness: px.Figure = Visualizer.plot_hardness_heatmap(df_filtrado)
                     st.plotly_chart(fig_hardness, key="hardness_map")
 
             # Visualización 3D a ancho completo
             if mostrar_3d_scatter:
-                st.subheader("Visualización 3D de Pozos")
+                st.subheader("Visualización 3D de pozos")
                 fig_3d_scatter: px.Figure = Visualizer.plot_3d_scatter(df_filtrado)
                 # Usar el ancho completo de la pantalla
                 st.plotly_chart(fig_3d_scatter, key="3d_scatter")
@@ -185,7 +187,3 @@ def main() -> None:
             st.error(f"Error al procesar o visualizar los datos: {e}")
     else:
         st.info("Esperando que se suba un archivo CSV.")
-
-
-if __name__ == "__main__":
-    main()
