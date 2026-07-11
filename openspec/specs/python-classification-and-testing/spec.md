@@ -46,11 +46,15 @@ works after `pip install -r requirements-dev.txt` with no other setup.
 
 ### R-5. Smoke test for extracted module
 
-A test under `tests/test_classification.py` MUST import only `classification` (never
-`data_processor`) and MUST assert at least one known input/output pair for each of
-`classify_duracion` and `hardness_index`. The test file SHOULD exercise the boundary
-cases `0`, `16`, `24`, `40`, and `60` for the index function, and the category
-thresholds for the classification function.
+A test under `tests/test_classification.py` MUST import only `classification`
+(never `data_processor`) and MUST assert at least three known input/output
+pairs for each of `classify_duracion`, `hardness_index`,
+`penetration_rate`, `classify_with_metric`, `hardness_index_with_metric`,
+`rig_mean_penetration`, and `rig_normalized_penetration`. The test file
+SHOULD exercise the boundary cases `0`, `16`, `24`, `40`, and `60` for the
+index function, the category thresholds for the classification function,
+and the `(17.0, 19.0)`, `(17.0, 0.0)`, and `(9.9, 0.0, 0.0)` cases for the
+new pure functions.
 
 ### R-6. Cross-stack parity test
 
@@ -59,6 +63,16 @@ A test under `tests/test_parity.py` MUST load
 asserting that `classification.classify_duracion` returns the expected category and
 that `classification.hardness_index` returns the expected numeric value within a
 documented tolerance.
+
+### R-7. Parity-aware smoke coverage for new pure functions
+
+`tests/test_classification.py` MUST include a smoke test for every
+parity-critical pure function added by `drilling-analytics-enhancements`.
+Each smoke test MUST (a) call the pure function with at least three known
+input/output pairs, (b) load the expected outputs from
+`tests/fixtures/parity/drilling_analytics_cases.json` when available, and
+(c) carry a `# PARITY-DEBT:` marker when the test exercises a Python-only
+DataFrame adapter rather than the bare pure function.
 
 ## Scenarios
 
@@ -99,6 +113,11 @@ documented tolerance.
 - AND for `T = 24` the index equals `50.0`
 - AND for `T = 40` the index equals `75.0`
 - AND for `T = 60` the index equals `100.0`
+- AND `penetration_rate(17.0, 19.0)` ≈ `0.8947368421`
+- AND `classify_with_metric(19.0, defaults, "duration")` equals
+  `"roca media"`
+- AND `rig_normalized_penetration(0.9, 0.7, 0.2)` equals `1.0`
+- AND `rig_normalized_penetration(0.6, 0.6, 0.0)` equals `0.0`
 
 #### S-6. Parity fixture drives Python assertions
 
@@ -106,3 +125,13 @@ documented tolerance.
 - WHEN `pytest tests/test_parity.py -q` runs
 - THEN every case in the fixture is asserted against the extracted functions
 - AND a failure message identifies the case index and input that diverged
+
+#### S-7. Smoke test exercises all five new pure functions
+
+- GIVEN the five new pure functions are exported from `classification.py`
+- WHEN `pytest tests/test_classification.py -q` runs
+- THEN at least one test asserts a known pair for `penetration_rate`
+- AND at least one test asserts a known pair for `classify_with_metric`
+- AND at least one test asserts a known pair for `hardness_index_with_metric`
+- AND at least one test asserts a known pair for `rig_mean_penetration`
+- AND at least one test asserts a known pair for `rig_normalized_penetration`

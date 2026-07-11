@@ -21,12 +21,16 @@ Para garantizar que el procesamiento funcione correctamente, cualquier CSV que s
 | `norte`         | Numérico                  | Coordenada Norte del pozo.                                                 |
 | `elevacion`     | Numérico                  | Elevación (cota) del pozo.                                                 |
 | `drill_pattern` | String (opcional)         | Patrón de perforación utilizado. Se emplea para filtros y agrupaciones.    |
+| `perforadora`   | String (opcional)         | Identificador de la perforadora/equipo. Habilita los gráficos por perforadora y el z-score normalizado. |
+| `prof. por operador` / `profundidad` | Numérico (opcional) | Profundidad perforada por el operador. Se usa para calcular `tasa_penetracion`. Si falta, la tasa queda como `NaN`. |
 
 Durante el procesamiento se calculan automáticamente:
 
 - **`duracion`**: diferencia en minutos entre `tiempo final` y `tiempo inicio`.
-- **`dureza`**: etiqueta categórica (roca suave, media, dura o muy dura) basada en la duración.
+- **`tasa_penetracion`**: profundidad perforada dividida por duración, en m/min. `None` cuando la duración no es válida o falta la columna de profundidad (la UI la renderiza como `—`).
+- **`dureza`**: etiqueta categórica (roca suave, media, dura o muy dura) basada en la duración (o en la métrica activa, ver abajo).
 - **`indice_dureza`**: valor entre 0 y 100 que describe la dureza en escala continua para facilitar comparaciones finas.
+- **`tasa_penetracion_normalizada`**: z-score de `tasa_penetracion` contra la media y desviación estándar de la misma `perforadora`. Solo aparece cuando la columna `perforadora` está presente en el CSV.
 
 ---
 
@@ -66,6 +70,12 @@ Durante el procesamiento se calculan automáticamente:
    - Dispersión espacial (2D y 3D).
    - Boxplot de duración.
    - Heatmap de índices de dureza.
+   - Boxplots por perforadora (cuando la columna está presente).
+5. Ajustar los **Umbrales** desde la barra lateral. El expander contiene seis sliders:
+   - `duration.{soft, medium, hard}` en minutos (clamp `[1, 120]`); defaults `16 / 24 / 40`.
+   - `rate.{soft, medium, hard}` en m/min (clamp `[0.01, 10.0]`); defaults `1.0 / 0.7 / 0.4`.
+   Cualquier cambio reclasifica `dureza` e `indice_dureza` en menos de un segundo.
+6. Usar el botón **Descargar CSV** debajo del resumen de filtros para bajar el DataFrame filtrado. El archivo viene codificado en `utf-8-sig` (UTF-8 con BOM, compatible con Excel) y conserva los encabezados incluso cuando el filtro devuelve cero filas.
 
 ### 2. WebApp React
 
