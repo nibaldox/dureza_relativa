@@ -92,7 +92,7 @@ def main() -> None:
                 with st.sidebar:
                     st.subheader("Filtro por drill pattern")
                     # Ordenar la lista de drill patterns en orden descendente
-                    drill_patterns: list = sorted(df_processed["drill_pattern"].astype(str).unique(), reverse=True)
+                    drill_patterns: list = sorted(df_processed["drill_pattern"].dropna().astype(str).unique(), reverse=True)
                     drill_pattern_seleccionado: list = st.multiselect("Selecciona drill patterns:", drill_patterns)
 
                     if drill_pattern_seleccionado:
