@@ -1,0 +1,401 @@
+{
+  "cases": [
+    {
+      "function": "penetration_rate",
+      "inputs": {
+        "depth_m": 17.0,
+        "duration_min": 19.0
+      },
+      "expected": 0.8947368421052632,
+      "tolerance": 1e-09,
+      "comment": "penetration_rate_basic_17_19"
+    },
+    {
+      "function": "penetration_rate",
+      "inputs": {
+        "depth_m": 17.0,
+        "duration_min": 0.0
+      },
+      "expected": null,
+      "comment": "penetration_rate_zero_duration_returns_none"
+    },
+    {
+      "function": "penetration_rate",
+      "inputs": {
+        "depth_m": 17.0,
+        "duration_min": null
+      },
+      "expected": null,
+      "comment": "penetration_rate_missing_duration_returns_none"
+    },
+    {
+      "function": "classify_with_metric",
+      "inputs": {
+        "value": 19.0,
+        "thresholds": {
+          "duration": {
+            "soft": 16.0,
+            "medium": 24.0,
+            "hard": 40.0
+          },
+          "rate": {
+            "soft": 1.0,
+            "medium": 0.7,
+            "hard": 0.4
+          }
+        },
+        "metric": "duration"
+      },
+      "expected": "roca media",
+      "comment": "classify_duration_default_19"
+    },
+    {
+      "function": "classify_with_metric",
+      "inputs": {
+        "value": 16.0,
+        "thresholds": {
+          "duration": {
+            "soft": 16.0,
+            "medium": 24.0,
+            "hard": 40.0
+          },
+          "rate": {
+            "soft": 1.0,
+            "medium": 0.7,
+            "hard": 0.4
+          }
+        },
+        "metric": "duration"
+      },
+      "expected": "roca media",
+      "comment": "classify_duration_boundary_16_to_harder"
+    },
+    {
+      "function": "classify_with_metric",
+      "inputs": {
+        "value": 1.5,
+        "thresholds": {
+          "duration": {
+            "soft": 16.0,
+            "medium": 24.0,
+            "hard": 40.0
+          },
+          "rate": {
+            "soft": 1.0,
+            "medium": 0.7,
+            "hard": 0.4
+          }
+        },
+        "metric": "penetration_rate"
+      },
+      "expected": "roca suave",
+      "comment": "classify_rate_above_soft_is_suave"
+    },
+    {
+      "function": "classify_with_metric",
+      "inputs": {
+        "value": 1.0,
+        "thresholds": {
+          "duration": {
+            "soft": 16.0,
+            "medium": 24.0,
+            "hard": 40.0
+          },
+          "rate": {
+            "soft": 1.0,
+            "medium": 0.7,
+            "hard": 0.4
+          }
+        },
+        "metric": "penetration_rate"
+      },
+      "expected": "roca media",
+      "comment": "classify_rate_boundary_soft_to_harder"
+    },
+    {
+      "function": "classify_with_metric",
+      "inputs": {
+        "value": 0.7,
+        "thresholds": {
+          "duration": {
+            "soft": 16.0,
+            "medium": 24.0,
+            "hard": 40.0
+          },
+          "rate": {
+            "soft": 1.0,
+            "medium": 0.7,
+            "hard": 0.4
+          }
+        },
+        "metric": "penetration_rate"
+      },
+      "expected": "roca dura",
+      "comment": "classify_rate_boundary_medium_to_harder"
+    },
+    {
+      "function": "classify_with_metric",
+      "inputs": {
+        "value": 0.4,
+        "thresholds": {
+          "duration": {
+            "soft": 16.0,
+            "medium": 24.0,
+            "hard": 40.0
+          },
+          "rate": {
+            "soft": 1.0,
+            "medium": 0.7,
+            "hard": 0.4
+          }
+        },
+        "metric": "penetration_rate"
+      },
+      "expected": "roca muy dura",
+      "comment": "classify_rate_boundary_hard_to_harder"
+    },
+    {
+      "function": "hardness_index_with_metric",
+      "inputs": {
+        "value": 16.0,
+        "thresholds": {
+          "duration": {
+            "soft": 16.0,
+            "medium": 24.0,
+            "hard": 40.0
+          },
+          "rate": {
+            "soft": 1.0,
+            "medium": 0.7,
+            "hard": 0.4
+          }
+        },
+        "metric": "duration"
+      },
+      "expected": 25.0,
+      "tolerance": 1e-09,
+      "comment": "hardness_index_duration_16_equals_25"
+    },
+    {
+      "function": "hardness_index_with_metric",
+      "inputs": {
+        "value": 24.0,
+        "thresholds": {
+          "duration": {
+            "soft": 16.0,
+            "medium": 24.0,
+            "hard": 40.0
+          },
+          "rate": {
+            "soft": 1.0,
+            "medium": 0.7,
+            "hard": 0.4
+          }
+        },
+        "metric": "duration"
+      },
+      "expected": 50.0,
+      "tolerance": 1e-09,
+      "comment": "hardness_index_duration_24_equals_50"
+    },
+    {
+      "function": "hardness_index_with_metric",
+      "inputs": {
+        "value": 40.0,
+        "thresholds": {
+          "duration": {
+            "soft": 16.0,
+            "medium": 24.0,
+            "hard": 40.0
+          },
+          "rate": {
+            "soft": 1.0,
+            "medium": 0.7,
+            "hard": 0.4
+          }
+        },
+        "metric": "duration"
+      },
+      "expected": 75.0,
+      "tolerance": 1e-09,
+      "comment": "hardness_index_duration_40_equals_75"
+    },
+    {
+      "function": "hardness_index_with_metric",
+      "inputs": {
+        "value": 60.0,
+        "thresholds": {
+          "duration": {
+            "soft": 16.0,
+            "medium": 24.0,
+            "hard": 40.0
+          },
+          "rate": {
+            "soft": 1.0,
+            "medium": 0.7,
+            "hard": 0.4
+          }
+        },
+        "metric": "duration"
+      },
+      "expected": 100.0,
+      "tolerance": 1e-09,
+      "comment": "hardness_index_duration_60_equals_100"
+    },
+    {
+      "function": "hardness_index_with_metric",
+      "inputs": {
+        "value": 1.5,
+        "thresholds": {
+          "duration": {
+            "soft": 16.0,
+            "medium": 24.0,
+            "hard": 40.0
+          },
+          "rate": {
+            "soft": 1.0,
+            "medium": 0.7,
+            "hard": 0.4
+          }
+        },
+        "metric": "penetration_rate"
+      },
+      "expected": 12.5,
+      "tolerance": 1e-09,
+      "comment": "hardness_index_rate_1_5_in_top_segment"
+    },
+    {
+      "function": "hardness_index_with_metric",
+      "inputs": {
+        "value": 0.85,
+        "thresholds": {
+          "duration": {
+            "soft": 16.0,
+            "medium": 24.0,
+            "hard": 40.0
+          },
+          "rate": {
+            "soft": 1.0,
+            "medium": 0.7,
+            "hard": 0.4
+          }
+        },
+        "metric": "penetration_rate"
+      },
+      "expected": 37.5,
+      "tolerance": 1e-09,
+      "comment": "hardness_index_rate_0_85_in_second_segment"
+    },
+    {
+      "function": "hardness_index_with_metric",
+      "inputs": {
+        "value": 0.55,
+        "thresholds": {
+          "duration": {
+            "soft": 16.0,
+            "medium": 24.0,
+            "hard": 40.0
+          },
+          "rate": {
+            "soft": 1.0,
+            "medium": 0.7,
+            "hard": 0.4
+          }
+        },
+        "metric": "penetration_rate"
+      },
+      "expected": 62.5,
+      "tolerance": 1e-09,
+      "comment": "hardness_index_rate_0_55_in_third_segment"
+    },
+    {
+      "function": "hardness_index_with_metric",
+      "inputs": {
+        "value": 0.2,
+        "thresholds": {
+          "duration": {
+            "soft": 16.0,
+            "medium": 24.0,
+            "hard": 40.0
+          },
+          "rate": {
+            "soft": 1.0,
+            "medium": 0.7,
+            "hard": 0.4
+          }
+        },
+        "metric": "penetration_rate"
+      },
+      "expected": 87.5,
+      "tolerance": 1e-09,
+      "comment": "hardness_index_rate_0_2_in_bottom_segment"
+    },
+    {
+      "function": "rig_mean_penetration",
+      "inputs": {
+        "rates": [
+          0.5,
+          0.7,
+          0.9
+        ]
+      },
+      "expected": 0.7,
+      "tolerance": 1e-09,
+      "comment": "rig_mean_three_values"
+    },
+    {
+      "function": "rig_mean_penetration",
+      "inputs": {
+        "rates": []
+      },
+      "expected": null,
+      "tolerance": null,
+      "comment": "rig_mean_empty_returns_none"
+    },
+    {
+      "function": "rig_mean_penetration",
+      "inputs": {
+        "rates": [
+          null,
+          0.5
+        ]
+      },
+      "expected": 0.5,
+      "tolerance": 1e-09,
+      "comment": "rig_mean_skips_none"
+    },
+    {
+      "function": "rig_normalized_penetration",
+      "inputs": {
+        "rate": 0.9,
+        "rig_avg": 0.7,
+        "rig_std": 0.2
+      },
+      "expected": 1.0,
+      "tolerance": 1e-09,
+      "comment": "rig_normalized_z_score_one"
+    },
+    {
+      "function": "rig_normalized_penetration",
+      "inputs": {
+        "rate": 0.6,
+        "rig_avg": 0.6,
+        "rig_std": 0.0
+      },
+      "expected": 0.0,
+      "tolerance": 1e-09,
+      "comment": "rig_normalized_zero_std_returns_zero"
+    },
+    {
+      "function": "rig_normalized_penetration",
+      "inputs": {
+        "rate": 0.5,
+        "rig_avg": 0.7,
+        "rig_std": 0.2
+      },
+      "expected": -1.0,
+      "tolerance": 1e-09,
+      "comment": "rig_normalized_z_score_minus_one"
+    }
+  ]
+}
