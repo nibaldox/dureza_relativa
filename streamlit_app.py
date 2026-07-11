@@ -9,9 +9,6 @@ from io import BytesIO
 # Configuración para que la página use todo el ancho
 st.set_page_config(layout="wide", page_title="Clasificador de Pozos", page_icon=":material/analytics:")
 
-# Detectar el tema activo (siempre "light" porque .streamlit/config.toml lo fija).
-streamlit_theme = st.context.theme.type
-
 
 @st.cache_data
 def cargar_datos(uploaded_file: BytesIO) -> pd.DataFrame:
